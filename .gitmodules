@@ -1,0 +1,3 @@
+[submodule "process"]
+	path = process
+	url = https://git.trovadores.duckdns.org/ianmethyst/spy-camera-process.git

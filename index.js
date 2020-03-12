@@ -41,11 +41,14 @@ app.post('/upload-photo', async (req, res) => {
       };
 
       // move photo to uploads directory
-      const filepath = `./uploads/${photo.name}`;
-      photo.mv(filepath);
+      const filepath = `uploads/${photo.name}`;
+      await photo.mv(`./${filepath}`);
 
-      const python = spawnSync('python3',
-        ['./main.py', `${filepath}`, `${city}`, `${school}`, `${age}`]);
+      const python = spawnSync(
+        'bash',
+        ['-e', './runProcess.sh', `../${filepath}`, `${city}`, `${school}`, `${age}`]);
+      console.log("stdout: ",python.stdout.toString('utf8'));
+      console.log("stderr: ",python.stderr.toString('utf8'));
 
       if (python.status === 0) {
         res.send({
