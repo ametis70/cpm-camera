@@ -67,7 +67,8 @@ app.post('/upload-photo', async (req, res) => {
 });
 
 // TODO: Remove this line. Only use for testing purposes
-app.use(express.static('uploads'));
+// app.use(express.static('uploads'));
+app.use(express.static('./website/build'));
 
 app.listen(port, () => {
   console.log(`App is listening on port ${port}.`);

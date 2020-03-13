@@ -1,3 +1,6 @@
 [submodule "process"]
 	path = process
-	url = https://git.trovadores.duckdns.org/ianmethyst/spy-camera-process.git
+	url = https://gitlab.com/cpmra_2020/camara-espia-procesamiento.git
+[submodule "website"]
+	path = website
+	url = https://gitlab.com/cpmra_2020/camara-espia-visualizador
