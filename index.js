@@ -1,7 +1,6 @@
 const express = require('express')
 const fileUpload = require('express-fileupload')
 const cors = require('cors')
-const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const { spawnSync } = require('child_process')
 const path = require('path')
@@ -18,8 +17,8 @@ app.use(
 )
 
 app.use(cors())
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 
 const port = process.env.PORT || 3000
@@ -80,7 +79,7 @@ app.post('/upload-photo', async (req, res) => {
 
 let lastFile
 
-app.get('/random', function (req, res) {
+app.get('/random', (_req, res) => {
   const files = fs.readdirSync(
     path.join(__dirname, `/process/processed/${day}`)
   )
@@ -102,7 +101,7 @@ app.use(
 )
 
 app.use(express.static(path.join(__dirname, '/website/build')))
-app.get('/', function (req, res) {
+app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '/website/build'))
 })
 
