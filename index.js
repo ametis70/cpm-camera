@@ -7,8 +7,19 @@ const path = require('path')
 const { sample, remove } = require('lodash')
 const fs = require('fs')
 const moment = require('moment-timezone')
+const expressReactViews = require('express-react-views')
+
+const routes = require('./routes')
 
 const app = express()
+
+app.set('views', path.join(__dirname, '/views'))
+app.set('view engine', 'jsx')
+app.engine('jsx', expressReactViews.createEngine())
+
+app.get('/admin', routes.admin)
+
+app.use('/css', express.static(path.join(__dirname, '/css')))
 
 app.use(
   fileUpload({

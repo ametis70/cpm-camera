@@ -4,9 +4,12 @@
   "description": "Spy camera web server and API",
   "main": "index.js",
   "scripts": {
+    "tailwind": "tailwindcss-cli build -o './css/tailwind.css'",
+    "start": "npm run tailwind && nodemon --exec 'node index.js'",
+    "serve": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint index.js",
-    "fix": "eslint --fix index.js"
+    "lint": "eslint *.js",
+    "fix": "eslint --fix *.js"
   },
   "author": "Ian Mancini",
   "license": "GPL-3.0",
@@ -14,10 +17,13 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
+    "express-react-views": "^0.11.0",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.28",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0"
   },
   "devDependencies": {
     "eslint": "^7.22.0",
@@ -27,6 +33,9 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-promise": "^4.3.1",
-    "prettier": "^2.2.1"
+    "eslint-plugin-react": "^7.22.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.2.1",
+    "tailwindcss-cli": "^0.1.2"
   }
 }
