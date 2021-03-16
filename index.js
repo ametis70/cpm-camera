@@ -8,18 +8,31 @@ const { sample, remove } = require('lodash')
 const fs = require('fs')
 const moment = require('moment-timezone')
 const expressReactViews = require('express-react-views')
+const passport = require('passport')
+const session = require('express-session')
+
+const cookieParser = require('cookie-parser')
+const bodyParser = require('body-parser')
 
 const db = require('./db')
-
 const routes = require('./routes')
+const { authRouter, ensureAuthenticated, initPassport } = require('./auth')
 
 const app = express()
+
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: false }))
+app.use(morgan('dev'))
+app.use(session({ secret: 'cats', resave: false, saveUninitialized: false }))
+app.use(passport.initialize())
+app.use(passport.session())
+initPassport()
+app.use(authRouter)
 
 app.set('views', path.join(__dirname, '/views'))
 app.set('view engine', 'jsx')
 app.engine('jsx', expressReactViews.createEngine())
-
-app.get('/admin', routes.admin)
 
 app.use('/css', express.static(path.join(__dirname, '/css')))
 
@@ -29,10 +42,7 @@ app.use(
   })
 )
 
-app.use(cors())
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-app.use(morgan('dev'))
+app.get('/admin', ensureAuthenticated, routes.admin)
 
 const port = process.env.PORT || 3000
 

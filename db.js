@@ -1,4 +1,5 @@
 const sqlite3 = require('sqlite3').verbose()
+const bcrypt = require('bcryptjs')
 
 const DBSOURCE = 'db.sqlite'
 
@@ -19,18 +20,21 @@ function registerUser(username = 'admin', password = 'admin') {
       console.warn(`user ${username} already exists`)
       return
     }
-    const insert = 'INSERT INTO user (user, password) VALUES (?,?)'
-    db.run(insert, [username, password])
+    const insert = 'INSERT INTO user (username, password) VALUES (?,?)'
+    const salt = bcrypt.genSaltSync(10)
+    const hash = bcrypt.hashSync(password, salt)
+    db.run(insert, [username, hash])
   })
 }
 
-const getUser = () => {
+const getUser = (cb) => {
   const sql = 'SELECT * FROM user'
   db.get(sql, [], (err, row) => {
-    if (err) {
+    if (cb) {
+      cb(err, row)
+    } else if (err) {
       throw err
     }
-    console.log(row)
     return row
   })
 }
@@ -39,9 +43,9 @@ db.serialize(() => {
   console.log('Connected to the SQLite database.')
   db.run(
     `CREATE TABLE IF NOT EXISTS user (
-            user text UNIQUE PRIMARY KEY,
+            username text UNIQUE PRIMARY KEY,
             password text,
-            CONSTRAINT user_unique UNIQUE (user)
+            CONSTRAINT user_unique UNIQUE (username)
             )`,
     (err) => {
       if (err) {
@@ -56,4 +60,4 @@ db.serialize(() => {
   )
 })
 
-module.exports = db
+module.exports = { db, getUser, registerUser }
