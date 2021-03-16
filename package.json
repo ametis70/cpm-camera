@@ -23,7 +23,8 @@
     "moment-timezone": "^0.5.28",
     "morgan": "^1.9.1",
     "react": "^16.14.0",
-    "react-dom": "^16.14.0"
+    "react-dom": "^16.14.0",
+    "sqlite3": "^5.0.2"
   },
   "devDependencies": {
     "eslint": "^7.22.0",

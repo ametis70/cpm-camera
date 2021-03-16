@@ -9,6 +9,8 @@ const fs = require('fs')
 const moment = require('moment-timezone')
 const expressReactViews = require('express-react-views')
 
+const db = require('./db')
+
 const routes = require('./routes')
 
 const app = express()
