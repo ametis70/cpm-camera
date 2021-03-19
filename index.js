@@ -47,6 +47,7 @@ const port = process.env.PORT || 3000
 const city = 'La Plata'
 const school = 'Bachillerato de Bellas Artes'
 const age = 17
+const fileNumber = 10421
 
 const day = moment.tz('America/Argentina/Buenos_Aires').format('YYYY-MM-DD')
 
@@ -73,10 +74,12 @@ app.post('/upload-photo', async (req, res) => {
       const python = spawnSync('bash', [
         '-e',
         path.join(__dirname, '/runProcess.sh'),
+        __dirname,
         filepath,
-        `${city}`,
-        `${school}`,
-        `${age}`
+        city,
+        school,
+        age,
+        fileNumber
       ])
       console.log('stdout: ', python.stdout.toString('utf8'))
       console.log('stderr: ', python.stderr.toString('utf8'))
