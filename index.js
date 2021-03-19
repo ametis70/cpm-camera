@@ -2,7 +2,7 @@ const express = require('express')
 const fileUpload = require('express-fileupload')
 const cors = require('cors')
 const morgan = require('morgan')
-const { spawnSync } = require('child_process')
+const { spawn, spawnSync } = require('child_process')
 const path = require('path')
 const { sample, remove } = require('lodash')
 const fs = require('fs')
@@ -10,9 +10,6 @@ const moment = require('moment-timezone')
 const expressReactViews = require('express-react-views')
 const passport = require('passport')
 const session = require('express-session')
-
-const cookieParser = require('cookie-parser')
-const bodyParser = require('body-parser')
 
 const db = require('./db')
 const routes = require('./routes')
@@ -126,6 +123,14 @@ app.use(
 app.use(express.static(path.join(__dirname, '/website/build')))
 app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, '/website/build'))
+})
+
+app.get('/camera-status', (req, res) => {
+  const cameraHost = '192.168.1.64'
+  const ping = spawn('ping', ['-c1', cameraHost])
+  ping.addListener('exit', (exitCode) => {
+    res.json({ connected: exitCode === 0 })
+  })
 })
 
 app.listen(port, () => {
