@@ -11,7 +11,7 @@ const expressReactViews = require('express-react-views')
 const passport = require('passport')
 const session = require('express-session')
 
-const db = require('./db')
+const { db } = require('./db')
 const routes = require('./routes')
 const { authRouter, ensureAuthenticated, initPassport } = require('./auth')
 
@@ -43,13 +43,28 @@ app.get('/admin', ensureAuthenticated, routes.admin)
 
 const port = process.env.PORT || 3000
 
-// TODO: Save and load this variables from a file
-const city = 'La Plata'
-const school = 'Bachillerato de Bellas Artes'
-const age = 17
-const fileNumber = 10421
-
 const day = moment.tz('America/Argentina/Buenos_Aires').format('YYYY-MM-DD')
+
+app.post('/update-info', (req, res) => {
+  const { city, school, age, file } = req.body
+
+  if (!city || !school || !age || !file) {
+    res.send(400)
+  }
+
+  db.serialize(() => {
+    db.run(
+      'REPLACE INTO visitorsinfo (id, city, school, age, file) VALUES (0, ?, ?, ?, ?)',
+      [city, school, age, file],
+      (err) => {
+        if (err) {
+          throw err
+        }
+      }
+    )
+  })
+  res.redirect('/admin')
+})
 
 app.post('/upload-photo', async (req, res) => {
   try {
@@ -59,40 +74,48 @@ app.post('/upload-photo', async (req, res) => {
         message: 'No file uploaded'
       })
     } else {
-      const { photo } = req.files
+      getVisitorsInfo(async (err, row) => {
+        if (err) {
+          res.send(500)
+          throw err
+        }
 
-      const data = {
-        name: photo.name,
-        mimetype: photo.mimetype,
-        size: photo.size
-      }
+        const { city, school, age, fileNumber } = row
+        const { photo } = req.files
 
-      // move photo to uploads directory
-      const filepath = path.join(__dirname, `/uploads/${photo.name}`)
-      await photo.mv(filepath)
+        const data = {
+          name: photo.name,
+          mimetype: photo.mimetype,
+          size: photo.size
+        }
 
-      const python = spawnSync('bash', [
-        '-e',
-        path.join(__dirname, '/runProcess.sh'),
-        __dirname,
-        filepath,
-        city,
-        school,
-        age,
-        fileNumber
-      ])
-      console.log('stdout: ', python.stdout.toString('utf8'))
-      console.log('stderr: ', python.stderr.toString('utf8'))
+        // move photo to uploads directory
+        const filepath = path.join(__dirname, `/uploads/${photo.name}`)
+        await photo.mv(filepath)
 
-      if (python.status === 0) {
-        res.send({
-          status: true,
-          message: 'Photo uploaded and processed succesfully',
-          data
-        })
-      } else {
-        res.status(500).send()
-      }
+        const python = spawnSync('bash', [
+          '-e',
+          path.join(__dirname, '/runProcess.sh'),
+          __dirname,
+          filepath,
+          city,
+          school,
+          age,
+          fileNumber
+        ])
+        console.log('stdout: ', python.stdout.toString('utf8'))
+        console.log('stderr: ', python.stderr.toString('utf8'))
+
+        if (python.status === 0) {
+          res.send({
+            status: true,
+            message: 'Photo uploaded and processed succesfully',
+            data
+          })
+        } else {
+          res.status(500).send()
+        }
+      })
     }
   } catch (err) {
     res.status(500).send(err)

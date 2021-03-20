@@ -39,6 +39,18 @@ const getUser = (cb) => {
   })
 }
 
+const getVisitorsInfo = (cb) => {
+  const sql = 'SELECT * FROM visitorsinfo'
+  db.get(sql, [], (err, row) => {
+    if (cb) {
+      cb(err, row)
+    } else if (err) {
+      throw err
+    }
+    return row
+  })
+}
+
 db.serialize(() => {
   console.log('Connected to the SQLite database.')
   db.run(
@@ -51,13 +63,34 @@ db.serialize(() => {
       if (err) {
         throw err
       } else if (process.env.NODE_ENV !== 'production') {
-        db.serialize(() => {
-          registerUser()
-          getUser()
-        })
+        //        db.serialize(() => {
+        //          registerUser()
+        //          getUser()
+        //        })
       }
+    }
+  )
+  db.run('DROP TABLE IF EXISTS visitorsinfo')
+  db.run(
+    `CREATE TABLE visitorsinfo (
+            id integer UNIQUE PRIMARY KEY,
+            city text,
+            school text,
+            age text,
+            file text
+            )`,
+    (err) => {
+      if (err) {
+        throw err
+      }
+    }
+  )
+  db.run(
+    "INSERT INTO visitorsinfo (id, city, school, age, file) VALUES (0, '', '', '', '')",
+    (err) => {
+      if (err) throw err
     }
   )
 })
 
-module.exports = { db, getUser, registerUser }
+module.exports = { db, getUser, registerUser, getVisitorsInfo }
