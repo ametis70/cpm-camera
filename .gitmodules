@@ -1,6 +1,0 @@
-[submodule "process"]
-	path = process
-	url = https://gitlab.com/cpmra_2020/camara-espia-procesamiento.git
-[submodule "website"]
-	path = website
-	url = https://gitlab.com/cpmra_2020/camara-espia-visualizador
