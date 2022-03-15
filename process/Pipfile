@@ -4,11 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-opencv-contrib-python = "==4.1.0.25"
+opencv-contrib-python = "==4.5.3.56"
 pillow = "*"
 babel = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.9"
