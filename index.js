@@ -11,7 +11,7 @@ const expressReactViews = require('express-react-views')
 const passport = require('passport')
 const session = require('express-session')
 
-const { db } = require('./db')
+const { db, getVisitorsInfo } = require('./db')
 const routes = require('./routes')
 const { authRouter, ensureAuthenticated, initPassport } = require('./auth')
 
