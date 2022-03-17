@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "process"
+version = "0.1.0"
+description = "Image processing script for Camara Espía"
+authors = ["Ian Mancini <ianmethyst@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "==3.9.10"
+Pillow = "==9.0.1"
+Babel = "^2.9.1"
+opencv-python-headless = "==4.5.5.64"
+
+[tool.poetry.dev-dependencies]
+pyinstaller = "^4.10"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
