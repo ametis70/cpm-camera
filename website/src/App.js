@@ -1,6 +1,6 @@
-import React from 'react';
-import styled from 'styled-components';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useState, useCallback } from 'react'
+import styled from 'styled-components'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const Wrapper = styled(motion.div)`
   position: absolute;
@@ -11,64 +11,55 @@ const Wrapper = styled(motion.div)`
   height: 100vh;
   overflow: hidden;
   text-align: center;
-  background: url(${props => props.bg });
+  background: ${({ bg }) => (bg ? `url(${bg})` : 'none')};
   background-size: cover;
   background-position: center;
   bacgrkound-repeat: no-repeat;
-`;
+`
 
-class App extends React.PureComponent {
-  constructor(props){
-    super(props);
+const App = () => {
+  const [serverResponse, setServerResponse] = useState(null)
+  console.log(serverResponse)
 
-    this.state = { 
-      data: null
-    }
-
-    this.getNewImage = this.getNewImage.bind(this);
-  }
-
-  getNewImage() {
-    fetch('/random')
-      .then(res => {
-	      return res.json();
-      }).then(data => {
-	console.log(data);
-        this.setState({ data: data.url });
+  const fetchData = useCallback(() => {
+    fetch('/processed/random', {
+      headers: {
+        Accept: 'application/json'
+      }
+    })
+      .then((res) => {
+        return res.json()
       })
-      .catch(err => {
-        console.log('Error happened during fetching!', err);
-      });
-  }
+      .then((data) => {
+        setServerResponse({ data: data.url, timestamp: data.timestamp })
+      })
+      .catch((err) => {
+        setServerResponse(null)
+        console.log('Error happened during fetching!', err)
+      })
+      .finally(() => {
+        setTimeout(() => fetchData(), 2000)
+      })
+  }, [])
 
-  componentDidMount() {
-    this.getNewImage();
-  }
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
-  componentDidUpdate(prevProps, prevState) {
-    // On state change, fetch and update timeout
-    setTimeout(() => { this.getNewImage(); }, 4000);
-  }
-
-  render() {
-    const { data } = this.state;
-    console.log(data);
-
-    return (
-      <AnimatePresence>
-        <Wrapper 
-          bg={data ? data : '' }
-          key={data}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ delay: 1, duration: 2, type: "tween" }}
-        >
-          { data ? null : 'Cargando...' }
-        </Wrapper>
-      </AnimatePresence>
-    );
-  }
+  return (
+    <AnimatePresence>
+      <Wrapper
+        bg={serverResponse?.url}
+        key={serverResponse?.url ?? 'loading'}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ delay: 1, duration: 2, type: 'tween' }}
+      >
+        {serverResponse?.url ? null : 'Cargando...'}
+      </Wrapper>
+    </AnimatePresence>
+  )
 }
 
-export default App;
+export default App
