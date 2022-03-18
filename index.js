@@ -10,6 +10,23 @@ const moment = require('moment-timezone')
 const expressReactViews = require('express-react-views')
 const passport = require('passport')
 const session = require('express-session')
+const {
+  STORAGE_DIR,
+  PROCESSED_IMAGES_DIR,
+  UPLOADS_DIR,
+  PROCESS_BIN,
+  WEBSITE_DIR
+} = require('./constants')
+
+const dirs = [STORAGE_DIR, PROCESSED_IMAGES_DIR, UPLOADS_DIR]
+
+dirs.forEach((dir) => {
+  if (fs.existsSync(dir)) {
+    return
+  }
+
+  fs.mkdirSync(dir)
+})
 
 const { db, getVisitorsInfo } = require('./db')
 const routes = require('./routes')
@@ -90,18 +107,18 @@ app.post('/upload-photo', async (req, res) => {
         }
 
         // move photo to uploads directory
-        const filepath = path.join(__dirname, `/uploads/${photo.name}`)
+        const filepath = path.join(UPLOADS_DIR, photo.name)
         await photo.mv(filepath)
 
         const python = spawnSync('bash', [
           '-e',
-          path.join(__dirname, '/runProcess.sh'),
-          __dirname,
+          PROCESS_BIN,
           filepath,
           city,
           school,
           age,
-          fileNumber
+          fileNumber,
+          PROCESSED_IMAGES_DIR
         ])
         console.log('stdout: ', python.stdout.toString('utf8'))
         console.log('stderr: ', python.stderr.toString('utf8'))
@@ -125,33 +142,40 @@ app.post('/upload-photo', async (req, res) => {
 
 let lastFile
 
-app.get('/random', (_req, res) => {
-  const files = fs.readdirSync(
-    path.join(__dirname, `/process/processed/${day}`)
-  )
+app.get('/processed/random', (_, res) => {
+  const todayDir = path.join(PROCESSED_IMAGES_DIR, day)
 
-  if (lastFile) {
+  if (!fs.existsSync(todayDir)) {
+    fs.mkdirSync(todayDir)
+  }
+
+  const files = fs.readdirSync(todayDir)
+
+  if (files.length === 0) {
+    return res.json({ url: null, timestamp: new Date().getTime() })
+  }
+
+  if (files.lenght > 1 && lastFile) {
     remove(files, (f) => f === lastFile)
-    console.log(`removing ${lastFile}`)
   }
 
   const file = sample(files)
   lastFile = file
 
-  res.json({ url: `/processed/${file}` })
+  res.json({
+    url: `/processed/${file}`,
+    timestamp: new Date().getTime()
+  })
 })
 
-app.use(
-  '/processed',
-  express.static(path.join(__dirname, `/process/processed/${day}`))
-)
+app.use('/processed', express.static(PROCESSED_IMAGES_DIR))
 
-app.use(express.static(path.join(__dirname, '/website/build')))
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(__dirname, '/website/build'))
+app.use(express.static(WEBSITE_DIR))
+app.get('/', (_, res) => {
+  res.sendFile(WEBSITE_DIR)
 })
 
-app.get('/camera-status', (req, res) => {
+app.get('/camera/status', (_, res) => {
   const cameraHost = '192.168.1.64'
   const ping = spawn('ping', ['-c1', cameraHost])
   ping.addListener('exit', (exitCode) => {

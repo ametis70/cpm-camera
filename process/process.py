@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument("school", action="store", help="School of the visitor")
     parser.add_argument("age", action="store", help="Age of the visitor")
     parser.add_argument("file", action="store", help="File number (legajo)")
+    parser.add_argument("outdir", action="store", help="Output directory")
 
     return parser.parse_args()
 
@@ -240,8 +241,8 @@ def process(args):
     today = date.today()
     time = strftime("%H-%M-%S")
 
-    Path(f"./processed/{today}/").mkdir(parents=True, exist_ok=True)
-    im.save(f"./processed/{today}/{time}.jpg")
+    Path(f"{args.outdir}/{today}/").mkdir(parents=True, exist_ok=True)
+    im.save(f"{args.outdir}/{today}/{time}.jpg")
 
 
 if __name__ == "__main__":

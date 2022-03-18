@@ -1,9 +1,11 @@
 const sqlite3 = require('sqlite3').verbose()
 const bcrypt = require('bcryptjs')
+const path = require('path')
+const { STORAGE_DIR } = require('./constants')
 
-const DBSOURCE = 'db.sqlite'
+const DB_FILE = path.join(STORAGE_DIR, 'db.sqlite')
 
-const db = new sqlite3.Database(DBSOURCE, (err) => {
+const db = new sqlite3.Database(DB_FILE, (err) => {
   if (err) {
     console.error(err.message)
     throw err
