@@ -1,0 +1,9 @@
+node_modules
+website/build
+website/node_modules
+process/__pycache__
+process/build
+process/dist
+process/process
+process/processed
+process/process.spec
