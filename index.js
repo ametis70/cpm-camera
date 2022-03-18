@@ -58,7 +58,7 @@ app.use(
 
 app.get('/admin', ensureAuthenticated, routes.admin)
 
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 4000
 
 const day = moment.tz('America/Argentina/Buenos_Aires').format('YYYY-MM-DD')
 

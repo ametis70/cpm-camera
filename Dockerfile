@@ -33,5 +33,7 @@ RUN npm ci --only=production
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 4000
+VOLUME /app/storage
+
 CMD ["node", "index.js"]
