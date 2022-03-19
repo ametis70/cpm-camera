@@ -24,14 +24,14 @@ const App = () => {
   const fetchData = useCallback(() => {
     fetch('/processed/random', {
       headers: {
-        Accept: 'application/json'
-      }
+        Accept: 'application/json',
+      },
     })
       .then((res) => {
         return res.json()
       })
       .then((data) => {
-        setServerResponse({ data: data.url, timestamp: data.timestamp })
+        setServerResponse({ url: data.url, timestamp: data.timestamp })
       })
       .catch((err) => {
         setServerResponse(null)

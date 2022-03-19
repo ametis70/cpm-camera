@@ -32,7 +32,7 @@ const getRandom = (_, res) => {
   lastFile = file
 
   res.json({
-    url: `/processed/${file}`,
+    url: `/processed/${day}/${file}`,
     timestamp: new Date().getTime(),
   })
 }
