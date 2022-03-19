@@ -1,6 +1,6 @@
 const { getVisitorsInfo } = require('../db')
 
-const admin = (_req, res) => {
+const view = (_req, res) => {
   getVisitorsInfo((err, row) => {
     if (err) {
       res.send(500)
@@ -10,4 +10,4 @@ const admin = (_req, res) => {
   })
 }
 
-module.exports = { admin }
+module.exports = { view }

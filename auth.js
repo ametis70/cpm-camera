@@ -19,7 +19,7 @@ function localStrategy() {
       if (err) {
         return done(err)
       }
-      if (user.username !== username) {
+      if (user.username && user.username !== username) {
         return done(null, false)
       }
       if (!bcrypt.compareSync(password, user.password)) {
@@ -55,7 +55,7 @@ authRouter.post(
   passport.authenticate('local', { failureRedirect: '/login' }),
   function (_req, res) {
     res.redirect('/admin')
-  }
+  },
 )
 
 authRouter.get('/login', (req, res) => {
@@ -78,5 +78,5 @@ authRouter.get('/check', ensureAuthenticated, function (req, res) {
 module.exports = {
   initPassport,
   ensureAuthenticated,
-  authRouter
+  authRouter,
 }

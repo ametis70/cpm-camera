@@ -12,5 +12,5 @@ module.exports = {
   UPLOADS_DIR,
   PROCESSED_IMAGES_DIR,
   PROCESS_BIN,
-  WEBSITE_DIR
+  WEBSITE_DIR,
 }

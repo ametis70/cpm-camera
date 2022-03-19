@@ -64,13 +64,8 @@ db.serialize(() => {
     (err) => {
       if (err) {
         throw err
-      } else if (process.env.NODE_ENV !== 'production') {
-        //        db.serialize(() => {
-        //          registerUser()
-        //          getUser()
-        //        })
       }
-    }
+    },
   )
   db.run('DROP TABLE IF EXISTS visitorsinfo')
   db.run(
@@ -85,14 +80,18 @@ db.serialize(() => {
       if (err) {
         throw err
       }
-    }
+    },
   )
   db.run(
     "INSERT INTO visitorsinfo (id, city, school, age, file) VALUES (0, '', '', '', '')",
     (err) => {
       if (err) throw err
-    }
+    },
   )
 })
+
+if (!getUser()) {
+  registerUser()
+}
 
 module.exports = { db, getUser, registerUser, getVisitorsInfo }
