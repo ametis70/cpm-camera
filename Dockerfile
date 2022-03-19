@@ -1,3 +1,5 @@
+LABEL org.opencontainers.image.source="https://github.com/ametis70/cpm-camera"
+
 # Process
 FROM python:3.9.10-bullseye AS builder-process
 
