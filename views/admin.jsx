@@ -5,7 +5,7 @@ function HelloMessage(props) {
   return (
     <>
       <DefaultLayout title={props.title}>
-        <form action="/update-info" method="post">
+        <form action="/info" method="post">
           <div>
             <label>Ciudad: </label>
             <input type="text" name="city" required />
@@ -47,9 +47,9 @@ function HelloMessage(props) {
         dangerouslySetInnerHTML={{
           __html: `
 const cameraText = document.querySelector('#camera-status')
-const ping = () => { fetch('/camera-status').then(response => response.json()).then(data => { cameraText.innerText = data.connected ? 'conectado' : 'desconectado' }) }
+const ping = () => { fetch('/camera/status').then(response => response.json()).then(data => { cameraText.innerText = data.connected ? 'conectado' : 'desconectado' }) }
 ping()
-window.setInterval(ping, 10000)`
+window.setInterval(ping, 10000)`,
         }}
       />
     </>

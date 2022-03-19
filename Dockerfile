@@ -9,7 +9,7 @@ RUN printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/
 WORKDIR /app
 COPY ./process .
 RUN poetry install 
-RUN poetry run pyinstaller --onefile process.py
+RUN ./build.sh
 
 # Website
 FROM node:16.14.0-bullseye as builder-web
@@ -25,7 +25,7 @@ RUN npm run build
 FROM node:16.14.0-bullseye as runtime
 
 WORKDIR /app
-COPY --from=builder-process /app/dist/process /app/process/process
+COPY --from=builder-process /app/process /app/process/process
 COPY --from=builder-web /app/build/ /app/website/build
 
 COPY ./package*.json ./

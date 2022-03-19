@@ -1,4 +1,5 @@
 import os, sys, random
+import pathlib
 import argparse
 from datetime import datetime, date
 from time import strftime
@@ -8,6 +9,8 @@ from babel.dates import format_datetime
 import cv2
 from PIL import Image, ImageDraw, ImageFont
 import unicodedata
+
+DATA_DIR = pathlib.Path(os.path.abspath(os.path.dirname(__file__)), "data")
 
 
 def parse_args():
@@ -28,7 +31,9 @@ def process(args):
     print("processing")
     image = cv2.imread(args.filename)
     image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    face_cascade = cv2.CascadeClassifier("./data/haarcascade_frontalface_default.xml")
+    face_cascade = cv2.CascadeClassifier(
+        str(DATA_DIR / "haarcascade_frontalface_default.xml")
+    )
     faces = face_cascade.detectMultiScale(image_gray)
 
     n_faces = len(faces)
@@ -43,8 +48,8 @@ def process(args):
 
     # Draw circles
     for x, y, width, height in faces:
-        randomFile = random.choice(os.listdir("./data/circles"))
-        circle = Image.open(f"./data/circles/{randomFile}")
+        randomFile = random.choice(os.listdir(DATA_DIR / "circles"))
+        circle = Image.open(str(DATA_DIR / "circles" / randomFile))
 
         circle = circle.resize((width * 2, height * 2), Image.ANTIALIAS)
         im.paste(circle, (x - width // 2, y - height // 2), circle)
@@ -52,14 +57,14 @@ def process(args):
     # Load fonts
     typewriter_font_size = 40
     typewriter_font = ImageFont.truetype(
-        "./data/ttf/typewriter.ttf", typewriter_font_size
+        str(DATA_DIR / "ttf" / "typewriter.ttf"), typewriter_font_size
     )
-    marker_font = ImageFont.truetype("./data/ttf/marker.ttf", 50)
-    marker_font_large = ImageFont.truetype("./data/ttf/marker.ttf", 70)
+    marker_font = ImageFont.truetype(str(DATA_DIR / "ttf" / "marker.ttf"), 50)
+    marker_font_large = ImageFont.truetype(str(DATA_DIR / "ttf" / "marker.ttf"), 70)
     marker_color = (13, 16, 153, 230)
 
     # Draw top sheet of paper
-    top_sheet = Image.open("./data/paper/01.png").convert("RGBA")
+    top_sheet = Image.open(str(DATA_DIR / "paper" / "01.png")).convert("RGBA")
     top_sheet = top_sheet.crop((0, 0, top_sheet.width - 300, top_sheet.height - 400))
     top_txt_layer = Image.new("RGBA", top_sheet.size, (255, 255, 255, 0))
     top_d = ImageDraw.Draw(top_txt_layer)
@@ -107,7 +112,7 @@ def process(args):
     )
 
     # Draw bottom sheet of paper
-    bottom_sheet = Image.open("./data/paper/02.png").convert("RGBA")
+    bottom_sheet = Image.open(str(DATA_DIR / "paper" / "02.png")).convert("RGBA")
     bottom_sheet = bottom_sheet.crop(
         (0, 0, bottom_sheet.width, bottom_sheet.height - 100)
     )
@@ -172,7 +177,7 @@ def process(args):
     )
 
     # Draw bottom sheet of paper
-    bottom_sheet = Image.open("./data/paper/01.png").convert("RGBA")
+    bottom_sheet = Image.open(str(DATA_DIR / "paper" / "01.png")).convert("RGBA")
     bottom_sheet = bottom_sheet.crop(
         (0, 0, bottom_sheet.width, bottom_sheet.height - 100)
     )

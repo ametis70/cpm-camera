@@ -1,5 +1,3 @@
 #!/bin/sh
 
-[ -z "$POETRY_ACTIVE" ] && echo "Poetry env must be active" && exit 1
-
-pyinstaller --onefile process.py
+poetry run pyinstaller --onefile --distpath . --clean --hidden-import "babel.numbers" --add-data="data/:data/" process.py

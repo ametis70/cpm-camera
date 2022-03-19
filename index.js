@@ -1,7 +1,7 @@
 const path = require('path')
 
 const express = require('express')
-const fileUpload = require('express-fileupload')
+const multer = require('multer')
 const expressReactViews = require('express-react-views')
 const cors = require('cors')
 const morgan = require('morgan')
@@ -14,7 +14,7 @@ const photoController = require('./controllers/photo')
 const cameraController = require('./controllers/camera')
 const adminController = require('./controllers/admin')
 
-const { PROCESSED_IMAGES_DIR, WEBSITE_DIR } = require('./constants')
+const { UPLOADS_DIR, PROCESSED_IMAGES_DIR, WEBSITE_DIR } = require('./constants')
 
 const { authRouter, ensureAuthenticated, initPassport } = require('./auth')
 
@@ -34,19 +34,15 @@ app.set('views', path.join(__dirname, '/views'))
 app.set('view engine', 'jsx')
 app.engine('jsx', expressReactViews.createEngine())
 
-app.use(
-  fileUpload({
-    createParentPath: true,
-  }),
-)
-
 const port = process.env.PORT || 4000
 
 app.use('/css', express.static(path.join(__dirname, '/css')))
 app.get('/admin', ensureAuthenticated, adminController.view)
 
+const upload = multer({ dest: UPLOADS_DIR })
+app.post('/photo', upload.single('photo'), photoController.uploadPhoto)
+
 app.post('/info', infoController.updateInfo)
-app.post('/photo', photoController.uploadPhoto)
 app.get('/processed/random', processedController.getRandom)
 app.use('/processed', express.static(PROCESSED_IMAGES_DIR))
 app.get('/camera/status', cameraController.getStatus)
