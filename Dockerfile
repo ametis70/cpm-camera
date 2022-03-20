@@ -1,6 +1,7 @@
 # Process
 FROM python:3.9.10-bullseye AS builder-process
 
+RUN apt-get update
 RUN apt-get install -y build-essential libssl-dev libffi-dev python-dev rustc
 RUN printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf
 
