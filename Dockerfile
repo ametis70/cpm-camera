@@ -16,8 +16,6 @@ RUN ./build.sh
 # Website
 FROM node:16.14.0-bullseye as builder-web
 
-LABEL org.opencontainers.image.source="https://github.com/ametis70/cpm-camera"
-
 WORKDIR /app
 COPY ./website/package*.json ./
 RUN npm ci --only=production
@@ -27,6 +25,8 @@ RUN npm run build
 
 # Runtime
 FROM node:16.14.0-bullseye as runtime
+
+LABEL org.opencontainers.image.source="https://github.com/ametis70/cpm-camera"
 
 WORKDIR /app
 COPY --from=builder-process /app/process /app/process/process
