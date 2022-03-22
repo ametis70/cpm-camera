@@ -49,7 +49,17 @@ curl -F photo=@process/test_single.jpg http://$SERVER_IP/photo
 
 ## Setup Kiosk
 1. Enable console autologin on `raspi-config`
-2. Create `$HOME/.xinitrc` with the following content:
+2. Add the following to the bottom of `.bashrc`:
+```sh
+echo "Waiting 5 seconds"
+sleep 5
+startx
+```
+3. Add specific driver settings:
+
+### Full KMS (slow)
+5. Select driver on `raspi-config` (`Advanced -> GL Driver -> GL (Full KMS`)
+6. Create `$HOME/.xinitrc` with the following content:
 ```sh
 xset s off
 xset -dpms
@@ -57,11 +67,20 @@ xset s noblank
 
 xrandr --output $X_OUTPUT --auto --rotate right
 
-chromium-browser --window-size=1080,1920 --kiosk --incognito http://localhost:4000
+exec chromium-browser --window-size=1080,1920 --kiosk --incognito http://localhost:4000
 ```
-3. Add the following to the bottom of `.bashrc`:
+
+### Legacy
+
+5. Select driver on `raspi-config` (`Advanced -> GL Driver -> Legacy`)
+6. Create `$HOME/.xinitrc` with the following content:
 ```sh
-echo "Waiting 5 seconds"
-sleep 5
-startx
+xset s off
+xset -dpms
+xset s noblank
+
+exec chromium-browser --window-size=1080,1920 --kiosk --incognito http://localhost:4000
 ```
+7. Rotate screen adding `display_hdmi_rotate=1` (90 deegrees) to `/boot/config.txt`:
+
+
