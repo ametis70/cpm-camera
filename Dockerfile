@@ -32,8 +32,11 @@ WORKDIR /app
 COPY --from=builder-process /app/process /app/process/process
 COPY --from=builder-web /app/build/ /app/website/build
 
+RUN apt-get update
+RUN apt-get install -y build-essential python
+
 COPY ./package*.json ./
-RUN npm ci --only=production
+RUN npm i
 
 COPY . .
 
