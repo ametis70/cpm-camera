@@ -67,7 +67,7 @@ xset s noblank
 
 xrandr --output $X_OUTPUT --auto --rotate right
 
-exec chromium-browser --window-size=1080,1920 --kiosk --incognito http://localhost:4000
+exec chromium-browser --window-size=1080,1920 --window-position=0,0 --kiosk --incognito http://localhost:4000
 ```
 
 ### Legacy
@@ -79,7 +79,7 @@ xset s off
 xset -dpms
 xset s noblank
 
-exec chromium-browser --window-size=1080,1920 --kiosk --incognito http://localhost:4000
+exec chromium-browser --window-size=1080,1920 --window-position=0,0 --kiosk --incognito http://localhost:4000
 ```
 7. Rotate screen adding `display_hdmi_rotate=1` (90 deegrees) to `/boot/config.txt`:
 
