@@ -24,7 +24,7 @@ const getRandom = (_, res) => {
     return res.json({ url: null, timestamp: new Date().getTime() })
   }
 
-  if (files.lenght > 1 && lastFile) {
+  if (files.length > 1 && lastFile) {
     remove(files, (f) => f === lastFile)
   }
 
